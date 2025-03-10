@@ -1,5 +1,5 @@
 import streamlit as st
-import os
+
 import google.generativeai as genai
 import re
 import random
@@ -51,9 +51,25 @@ def check_password_strength(password):
     return score, feedback
 
 def generate_strong_password(length=12):
-    characters = string.ascii_letters + string.digits + "!@#$%^&*"
-    password = "".join(random.choice(characters) for _ in range(length))
-    return password
+    if length < 8:
+        length = 8
+
+
+    password = [
+        random.choice(string.ascii_uppercase),
+        random.choice(string.ascii_lowercase),
+        random.choice(string.digits),
+        random.choice("!@#$%^&*")
+    ]
+    
+
+    remaining_length = length - len(password)
+    password += random.choices(string.ascii_letters + string.digits + "!@#$%^&*", k=remaining_length)
+    
+
+    random.shuffle(password)
+    
+    return ''.join(password)
 
 def get_gemini_enhanced_feedback(password, feedback, strength_category):
     if strength_category == "Strong" and len(feedback) == 0:
